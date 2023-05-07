@@ -1,0 +1,267 @@
+/*Дял теста*/
+/*div {
+    border: 0.15em solid black;
+}
+.hidden {
+    display: none;
+}*/
+
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 100vh;
+
+    /*background: linear-gradient(0deg, rgb(247, 247, 247) 24%, rgb(138, 199, 255) 92%);*/
+    background: linear-gradient(0deg, rgb(247, 247, 247) 24%, rgb(114, 178, 253) 92%);
+}
+
+.music-player {
+    width: 25em;
+    height: 45em;
+
+    padding: 2em 2em;
+    border-radius: 2em;
+    background-color: white;
+    box-shadow: 0.5em 1em 3em rgba(0, 0, 0, 0.25);
+
+    font-family: 'Inter', sans-serif;
+}
+
+.song-image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#song-image {
+    width: 100%;
+    border-radius: 1.5em;
+    border: 0.15em solid black;
+}
+
+.song-info-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5em;
+}
+
+#song-artist {
+    color: dimgrey;
+}
+
+.buttons-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+
+.music-player button {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.music-player button.active i {
+    color: #2887e3;
+}
+
+#play-pause-button {
+    font-size: 1.25em;
+
+    width: 2.5em;
+    height: 2.5em;
+
+    border-radius: 50%;
+    background-color: #2887e3;
+    color: white;
+}
+
+#prev-button,
+#next-button {
+    font-size: 1.25em;
+    color: black;
+}
+
+#shuffle-button,
+#repeat-button {
+    font-size: 1em;
+    color: #949494;
+}
+
+#progress-bar,
+#volume-bar {
+    cursor: pointer;
+}
+
+.song-image-container,
+.song-info-container,
+.buttons-container,
+.progress-container,
+.volume-container,
+.vinyl-container {
+    margin-top: 1em;
+}
+
+#progress-bar {
+    width: 100%;
+}
+
+.time-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.volume-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5em;
+}
+
+
+#volume-button {
+    display: inline-flex;
+    max-width: 0.4em;
+}
+
+#current-volume {
+    display: inline-flex;
+    max-width: 0.4em;
+}
+
+.playlist-button-container {
+    margin-top: 2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#playlist-button {
+    font-size: 1.25em;
+}
+
+.playlist-container {
+    background-color: white;
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+
+    width: 22em;
+    transform: translateY(-165%);
+
+    overflow: hidden;
+    padding: 1em 1em;
+    border-radius: 2em;
+    border: 0.05em solid black;
+    box-shadow: 0.5em 1em 3em rgba(0, 0, 0, 0.25);
+
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0.3s ease-in, opacity 0.3s ease-in;
+}
+
+.playlist-container.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+#playlist-name {
+    margin-bottom: 0.5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#playlist-songs {
+    height: 20em;
+    overflow-x: hidden;
+    overflow-y: scroll;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5em;
+}
+
+.playlist-song {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+
+    cursor: pointer;
+    border-radius: 0.5em;
+    width: 19.5em;
+}
+
+.playlist-song.active {
+    background: #62b3ff;
+}
+
+.playlist-song:not(.active):hover {
+    background: #62b3ff;
+}
+
+.playlist-song-image-container {
+    display: flex;
+}
+
+.playlist-song-image {
+    border-radius: 0.5em;
+    border: 0.05em solid black;
+    width: 3em;
+    margin-left: 0.1em;
+}
+
+.playlist-song-info-container {
+    font-size: 0.9em;
+}
+
+.playlist-song-name {
+    font-weight: bold;
+}
+
+.playlist-song-artist {
+    color: dimgrey;
+}
+
+::-moz-range-thumb {
+    background: white;
+    border: 0.2em solid #2887e3;
+    height: 1.2em;
+    width: 1.2em;
+    border-radius: 1em;
+}
+
+::-moz-range-thumb:hover {
+    transform: scale(1.2);
+}
+
+::-moz-range-track,
+::-moz-range-progress {
+    border: none;
+    height: 0.4em;
+    border-radius: 0.4em;
+}
+
+::-moz-range-track {
+    background: #f0f0f0;
+}
+
+::-moz-range-progress {
+    background: #2887e3;
+}

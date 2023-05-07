@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Музыкальный плеер</title>
+
+    <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/all.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter&display=swap">
+</head>
+<body>
+    <div class="music-player">
+        <div class="song-image-container">
+            <img src="" alt="Image" id="song-image">
+        </div>
+
+        <div class="song-info-container">
+            <h2 id="song-name"></h2>
+            <p id="song-album-year">
+                <span id="song-album"></span>
+                <span id="song-year"></span>
+            </p>
+            <p id="song-artist"></p>
+        </div>
+
+        <div class="buttons-container">
+            <button id="shuffle-button">
+                <i class="fa-solid fa-shuffle"></i>
+            </button>
+
+            <button id="prev-button">
+                <i class="fa-solid fa-backward"></i>
+            </button>
+
+            <button id="play-pause-button">
+                <i class="fa-solid fa-play"></i>
+            </button>
+
+            <button id="next-button">
+                <i class="fa-solid fa-forward"></i>
+            </button>
+
+            <button id="repeat-button">
+                <i class="fa-solid fa-repeat"></i>
+            </button>
+        </div>
+
+        <div class="progress-container">
+            <input type="range" id="progress-bar">
+        </div>
+
+        <div class="time-container">
+            <span id="current-time"></span>
+            <span id="duration"></span>
+        </div>
+
+        <div class="volume-container">
+            <button id="volume-button">
+                <i class="fa-solid fa-volume"></i>
+            </button>
+
+            <input type="range" id="volume-bar" max="1" step="0.02">
+
+            <span id="current-volume"></span>
+        </div>
+
+        <div class="playlist-container">
+            <h3 id="playlist-name">Плейлист</h3>
+            <div id="playlist-songs"></div>
+        </div>
+
+        <div class="playlist-button-container">
+            <button id="playlist-button">
+                <i class="fa-solid fa-music"></i>
+            </button>
+        </div>
+
+        <audio src="audio/blank.mp3" id="audio" preload="metadata"></audio>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
