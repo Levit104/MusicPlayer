@@ -239,12 +239,12 @@ function repeatMode() {
         repeatButton.classList.add('active');
         repeatButton.setAttribute('title', 'Повтор плейлиста');
         repeatOn = true;
-    } else if (iconType.contains('fa-repeat')) {
-        iconType.replace('fa-repeat', 'fa-repeat-1');
+    } else if (!iconType.contains('repeat-one')) {
+        iconType.add('repeat-one');
         repeatButton.setAttribute('title', 'Повтор трека');
         audio.loop = true;
     } else {
-        iconType.replace('fa-repeat-1', 'fa-repeat');
+        iconType.remove('repeat-one');
         repeatButton.classList.remove('active');
         repeatButton.setAttribute('title', 'Повтор выключен');
         audio.loop = false;
@@ -335,7 +335,7 @@ function muteVolume() {
 
     if (!audio.muted) {
         audio.muted = true;
-        iconType.value = 'fa-solid fa-volume-slash';
+        iconType.value = 'fa-solid fa-volume-xmark';
     } else {
         changeVolume();
     }
@@ -385,8 +385,7 @@ function initPlaylist() {
 
 function togglePlaylist() {
     let iconType = playlistButton.querySelector('i').classList;
-    iconType.toggle('fa-music-slash');
-    iconType.toggle('fa-music');
+    iconType.toggle('music-slash');
 
     playlistContainer.classList.toggle('active');
 }

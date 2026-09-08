@@ -265,3 +265,31 @@ body {
 ::-moz-range-progress {
     background: #2887e3;
 }
+
+.repeat-one {
+    position: relative;
+}
+
+.repeat-one::after {
+    content: "1";
+    position: absolute;
+    font-size: 0.3em;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.music-slash {
+    position: relative;
+}
+
+.music-slash::after {
+    content: "";
+    position: absolute;
+    width: 0.1em;
+    height: 1.5em;
+    background: currentColor;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
