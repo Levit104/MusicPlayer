@@ -6,6 +6,41 @@
 * Если активен режим повтора трека, то трек крутится бесконечно
 */
 
+const STORAGE_KEY = 'abtest_version';
+
+function setVersionForTest() {
+    let version = localStorage.getItem(STORAGE_KEY);
+
+    if (!version) {
+        // Первый визит — случайный выбор
+        version = Math.random() < 0.5 ? 'A' : 'B';
+        localStorage.setItem(STORAGE_KEY, version);
+        console.log('Назначена новая версия:', version);
+    } else {
+        console.log('Сохранённая версия:', version);
+    }
+
+    // 2. Применяем визуальные изменения
+    if (version === 'B') {
+        const addSongsButton = document.querySelector(`label[for="add-songs-button"]`);
+        const playlistHeader = document.querySelector('.playlist-header');
+
+        addSongsButton.innerHTML = 'Добавить трек' + addSongsButton.innerHTML;
+        addSongsButton.classList.replace('add-songs-button', 'add-songs-button-2');
+        playlistHeader.classList.replace('playlist-header', 'playlist-header-2');
+    }
+
+    // 3. Отправка события в аналитику
+    ym(112395069, 'params', {version: version});
+}
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Delete') {
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
+    }
+});
+
 const originalSongsList = [
     {
         name: 'Another Brick In The Wall',
@@ -110,6 +145,8 @@ async function initStuff() {
     endSong = songsList.length - 1;
     initPlaylist();
     loadSong();
+
+    setVersionForTest();
 }
 
 // Для тестов
@@ -415,6 +452,10 @@ function togglePlaylist() {
     iconType.toggle('music-slash');
 
     playlistContainer.classList.toggle('active');
+
+    if (playlistContainer.classList.contains('active')) {
+        ym(112395069, 'reachGoal', 'open_playlist', {version: localStorage.getItem(STORAGE_KEY)});
+    }
 }
 
 playlistButton.addEventListener('click', togglePlaylist);
@@ -426,6 +467,8 @@ const addSongsButton = document.querySelector('#add-songs-button');
 addSongsButton.setAttribute('title', 'Добавить треки');
 
 addSongsButton.addEventListener('change', async (e) => {
+    ym(112395069, 'reachGoal', 'add_track', {version: localStorage.getItem(STORAGE_KEY)});
+
     const files = Array.from(e.target.files);
 
     for (const file of files) {

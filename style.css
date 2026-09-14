@@ -34,6 +34,8 @@ body {
     box-shadow: 0.5em 1em 3em rgba(0, 0, 0, 0.25);
 
     font-family: 'Inter', sans-serif;
+
+    position: relative;
 }
 
 .song-image-container {
@@ -156,14 +158,12 @@ body {
 .playlist-container {
     background-color: white;
     position: absolute;
-    margin-left: auto;
-    margin-right: auto;
-    left: 0;
-    right: 0;
+
+    left: 50%;
+    top: 1em;
+    transform: translateX(-50%);
 
     width: 22em;
-    transform: translateY(-165%);
-
     overflow: hidden;
     padding: 1em 1em;
     border-radius: 2em;
@@ -201,6 +201,28 @@ body {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5em;
+}
+
+.playlist-header-2 {
+    margin-bottom: 0.5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5em;
+    flex-direction: column;
+}
+
+.add-songs-button-2 {
+    cursor: pointer;
+    background-color: #333333;
+    color: white;
+    padding: 0.5em 1em;
+    border-radius: 0.5em;
+    transition: background-color 0.2s;
+}
+
+.add-songs-button-2:hover {
+    background-color: #444444;
 }
 
 .playlist-song {
