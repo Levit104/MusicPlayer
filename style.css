@@ -212,7 +212,9 @@ body {
     flex-direction: column;
 }
 
-.add-songs-button-2 {
+.music-player .add-songs-button-2 {
+    font-family: inherit;
+    font-size: 1.01em;
     cursor: pointer;
     background-color: #333333;
     color: white;
