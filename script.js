@@ -9,16 +9,27 @@
 const STORAGE_KEY = 'abtest_version';
 
 function setVersionForTest() {
-    let version = localStorage.getItem(STORAGE_KEY);
+    let version;
 
-    if (!version) {
-        // Первый визит — случайный выбор
-        version = Math.random() < 0.5 ? 'A' : 'B';
-        localStorage.setItem(STORAGE_KEY, version);
-        console.log('Назначена новая версия:', version);
-    } else {
-        console.log('Сохранённая версия:', version);
+    while (true) {
+        const input = prompt('Выберите версию (A или B):');
+
+        if (input === null) {
+            return;
+        }
+
+        const value = input.trim().toUpperCase();
+
+        if (value === 'A' || value === 'B') {
+            version = value;
+            break;
+        }
+
+        alert('Введите только A или B');
     }
+
+    localStorage.setItem(STORAGE_KEY, version);
+    console.log('Назначена новая версия:', version);
 
     // 2. Применяем визуальные изменения
     if (version === 'B') {
