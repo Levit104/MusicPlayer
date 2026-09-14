@@ -22,7 +22,7 @@ function setVersionForTest() {
 
     // 2. Применяем визуальные изменения
     if (version === 'B') {
-        const addSongsButton = document.querySelector(`label[for="add-songs-button"]`);
+        const addSongsButton = document.querySelector('#add-songs-button');
         const playlistHeader = document.querySelector('.playlist-header');
 
         addSongsButton.innerHTML = 'Добавить трек' + addSongsButton.innerHTML;
