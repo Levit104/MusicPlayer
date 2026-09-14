@@ -180,11 +180,16 @@ body {
     opacity: 1;
 }
 
-#playlist-name {
+.playlist-header {
     margin-bottom: 0.5em;
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 0.5em;
+}
+
+.add-songs-button {
+    cursor: pointer;
 }
 
 #playlist-songs {
@@ -292,4 +297,24 @@ body {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.delete-local-song-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-left: auto;
+    padding: 0.5em;
+
+    color: #aaa;
+    background: transparent;
+    border: none;
+
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.delete-local-song-button:hover {
+    color: #e74c3c;
 }

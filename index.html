@@ -84,7 +84,19 @@
         </div>
 
         <div class="playlist-container">
-            <h3 id="playlist-name">Плейлист</h3>
+            <div class="playlist-header">
+                <h3 id="playlist-name">Плейлист</h3>
+                <label for="add-songs-button" class="add-songs-button">
+                    <i class="fa-solid fa-plus"></i>
+                </label>
+                <input
+                    type="file"
+                    id="add-songs-button"
+                    accept="audio/*"
+                    multiple
+                    hidden
+                >
+            </div>
             <div id="playlist-songs"></div>
         </div>
 

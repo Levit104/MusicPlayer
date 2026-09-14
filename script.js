@@ -89,14 +89,23 @@ const originalSongsList = [
     }
 
 ];
+
+const localSongsList = [];
+
 const audio = document.querySelector('#audio');
 
 let songsList;
 let songIndex;
 let endSong;
 
-function initStuff() {
-    songsList = [...originalSongsList];
+async function initStuff() {
+    try {
+        await loadLocalSongsFromDB();
+    } catch (error) {
+        console.error('Не удалось загрузить локальные треки:', error);
+    }
+
+    songsList = [...originalSongsList, ...localSongsList];
     songIndex = 0;
     endSong = songsList.length - 1;
     initPlaylist();
@@ -120,12 +129,16 @@ const songYear = document.querySelector('#song-year');
 const songArtist = document.querySelector('#song-artist');
 const songImage = document.querySelector('#song-image');
 
+function getSongYearText(song) {
+    return (song.year !== '') ? `(${song.year})` : '';
+}
+
 function loadSong() {
     let song = songsList[songIndex];
 
     songName.textContent = song.name;
     songAlbum.textContent = song.album;
-    songYear.textContent = `(${song.year})`;
+    songYear.textContent = getSongYearText(song);
     songArtist.textContent = song.artist;
     songImage.src = song.imageLink;
     audio.src = song.audioLink;
@@ -206,7 +219,7 @@ function shuffleMode() {
         shuffleButton.classList.remove('active');
         shuffleButton.setAttribute('title', 'Обычный порядок');
         shuffleOn = false;
-        songsList = [...originalSongsList];
+        songsList = [...originalSongsList, ...localSongsList];
     } else {
         shuffleButton.classList.add('active');
         shuffleButton.setAttribute('title', 'Случайный порядок');
@@ -367,18 +380,32 @@ function loadAndPlayPlaylistSong(id) {
 
 function initPlaylist() {
     playlistSongs.innerHTML = '';
+
     for (let i = 0; i < songsList.length; i++) {
         let playlistSong = songsList[i];
+
+        const deleteButton = playlistSong.id !== undefined
+            ? `<button
+                    class="delete-local-song-button"
+                    title="Удалить трек"
+                    onclick="event.stopPropagation(); deleteLocalSong(${playlistSong.id})">
+                    <i class="fa-solid fa-trash"></i>
+               </button>`
+            : '';
+
         playlistSongs.innerHTML +=
             `<div id="song-${i}" class='playlist-song' onclick='loadAndPlayPlaylistSong(${i})'>
                 <div class="playlist-song-image-container">
                     <img src="${playlistSong.imageLink}" alt="playlist-song-image" class="playlist-song-image"/>
                 </div>
+
                 <div class="playlist-song-info-container">
                     <p class="playlist-song-name">${playlistSong.name}</p>
-                    <p class="playlist-song-album-year">${playlistSong.album} (${playlistSong.year})</p>
+                    <p class="playlist-song-album-year">${playlistSong.album} ${getSongYearText(playlistSong)}</p>
                     <p class="playlist-song-artist">${playlistSong.artist}</p>
                 </div>
+
+                ${deleteButton}
             </div>`;
     }
 }
@@ -392,3 +419,187 @@ function togglePlaylist() {
 
 playlistButton.addEventListener('click', togglePlaylist);
 /*Плейлист - END*/
+
+/*Добавление и удаление локальных треков - START*/
+const addSongsButton = document.querySelector('#add-songs-button');
+
+addSongsButton.setAttribute('title', 'Добавить треки');
+
+addSongsButton.addEventListener('change', async (e) => {
+    const files = Array.from(e.target.files);
+
+    for (const file of files) {
+        const localSong = {
+            name: file.name.replace(/\.[^/.]+$/, ''),
+            album: 'Неизвестный альбом',
+            year: '',
+            artist: 'Неизвестный исполнитель',
+            imageLink: 'img/blank.jpg',
+            audioLink: URL.createObjectURL(file),
+            file: file
+        };
+
+        const id = await saveLocalSongToDB(localSong);
+        localSong.id = id;
+        localSongsList.push(localSong);
+        songsList.push(localSong);
+    }
+
+    songIndex = endSong = songsList.length - 1;
+    initPlaylist();
+    loadSong();
+    playSong();
+
+    e.target.value = '';
+});
+
+async function deleteLocalSong(id) {
+    const songToDeleteIndex = localSongsList.findIndex(song => song.id === id);
+
+    if (songToDeleteIndex === -1) {
+        return;
+    }
+
+    const songToDelete = localSongsList[songToDeleteIndex];
+    const deletedSongIndex = songsList.findIndex(song => song === songToDelete);
+    const wasCurrentSong = songIndex === deletedSongIndex;
+
+    try {
+        await deleteLocalSongFromDB(id);
+
+        URL.revokeObjectURL(songToDelete.audioLink);
+
+        localSongsList.splice(songToDeleteIndex, 1);
+
+        songsList = songsList.filter(song => song !== songToDelete);
+
+        initPlaylist();
+
+        if (wasCurrentSong) {
+            songIndex = Math.min(deletedSongIndex, songsList.length - 1);
+            loadSong();
+            pauseSong(); // только чтобы сменить иконку
+        } else {
+            if (deletedSongIndex < songIndex) {
+                songIndex--;
+            }
+
+            updatePlaylistActive();
+        }
+
+        endSong = songsList.length - 1; // TODO shuffle
+
+    } catch (error) {
+        console.error('Не удалось удалить трек:', error);
+    }
+}
+/*Добавление и удаление локальных треков - END*/
+
+/* IndexedDB - START */
+const DB_NAME = 'MusicPlayerDB';
+const DB_VERSION = 1;
+const STORE_NAME = 'songs';
+
+function openDatabase() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+        request.onupgradeneeded = () => {
+            const db = request.result;
+
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
+                db.createObjectStore(STORE_NAME, {
+                    keyPath: 'id',
+                    autoIncrement: true
+                });
+            }
+        };
+
+        request.onsuccess = () => {
+            resolve(request.result);
+        };
+
+        request.onerror = () => {
+            reject(request.error);
+        };
+    });
+}
+
+async function saveLocalSongToDB(song) {
+    return openDatabase().then(db => {
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(STORE_NAME, 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+
+            const request = store.add({
+                name: song.name,
+                album: song.album,
+                year: song.year,
+                artist: song.artist,
+                imageLink: song.imageLink,
+                file: song.file
+            });
+
+            transaction.oncomplete = () => {
+                resolve(request.result);
+            };
+
+            transaction.onerror = () => {
+                reject(request.error);
+            };
+        });
+    });
+}
+
+async function loadLocalSongsFromDB() {
+    return openDatabase().then(db => {
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(STORE_NAME, 'readonly');
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.getAll();
+
+            request.onsuccess = () => {
+                const savedSongs = request.result;
+
+                savedSongs.forEach(song => {
+                    localSongsList.push({
+                        id: song.id,
+                        name: song.name,
+                        album: song.album,
+                        year: song.year,
+                        artist: song.artist,
+                        imageLink: song.imageLink,
+                        audioLink: URL.createObjectURL(song.file),
+                        file: song.file
+                    });
+                });
+
+                resolve();
+            };
+
+            request.onerror = () => {
+                reject(request.error);
+            };
+        });
+    });
+}
+
+async function deleteLocalSongFromDB(id) {
+    return openDatabase().then(db => {
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(STORE_NAME, 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+
+            store.delete(id);
+
+            transaction.oncomplete = () => {
+                resolve();
+            };
+
+            transaction.onerror = () => {
+                reject(transaction.error);
+            };
+        });
+    });
+}
+/* IndexedDB - END */
