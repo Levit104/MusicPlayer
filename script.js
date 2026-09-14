@@ -463,12 +463,16 @@ playlistButton.addEventListener('click', togglePlaylist);
 
 /*Добавление и удаление локальных треков - START*/
 const addSongsButton = document.querySelector('#add-songs-button');
+const addSongsInput = document.querySelector('#add-songs-input');
 
 addSongsButton.setAttribute('title', 'Добавить треки');
 
-addSongsButton.addEventListener('change', async (e) => {
+addSongsButton.addEventListener('click', () => {
+    addSongsInput.click();
     ym(112395069, 'reachGoal', 'add_track', {version: localStorage.getItem(STORAGE_KEY)});
+});
 
+addSongsInput.addEventListener('change', async (e) => {
     const files = Array.from(e.target.files);
 
     for (const file of files) {
